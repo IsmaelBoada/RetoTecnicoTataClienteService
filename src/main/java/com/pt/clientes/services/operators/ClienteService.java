@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -19,28 +20,32 @@ public class ClienteService {
 
     private final ClienteBuilder clienteBuilder;
     private final ClienteRepository clienteRepository;
-
+    private final PersonaService personaService;
 
     public ClienteDto save(ClienteDto model) {
-        return clienteBuilder.builderResponse(clienteRepository.save(clienteBuilder.builder(model)));
+
+        if (Objects.isNull(model.getPersona())) {
+            throw new GeneralException(ExceptionMessages.PERSONA_NO_FOUND);
+        }
+        return clienteBuilder.builderResponse(clienteRepository.save(clienteBuilder.builder(model,
+                personaService.create(model.getPersona()))));
     }
 
     public ClienteDto update(UUID idToken, ClienteDto model) {
-        Cliente cliente = clienteRepository.findByTokenIdAndEstado(idToken, Boolean.TRUE).orElseThrow(() -> new GeneralException(MessageFormat
+        Cliente cliente = clienteRepository.findByTokenId(idToken).orElseThrow(() -> new GeneralException(MessageFormat
                 .format(ExceptionMessages.CLIENTE_NOT_FOUND, idToken)));
         return clienteBuilder.builderResponse(clienteRepository.save(clienteBuilder.builderUpdate(cliente, model)));
     }
 
     public ClienteDto findByTokenId(UUID tokenId) {
-        return clienteBuilder.builderResponse(clienteRepository.findByTokenIdAndEstado(tokenId, Boolean.TRUE)
+        return clienteBuilder.builderResponse(clienteRepository.findByTokenId(tokenId)
                 .orElseThrow(() -> new GeneralException(MessageFormat.format(ExceptionMessages.CLIENTE_NOT_FOUND, tokenId))));
     }
 
     public void delete(UUID tokenId) {
-        Cliente cliente = clienteRepository.findByTokenIdAndEstado(tokenId, Boolean.TRUE)
+        Cliente cliente = clienteRepository.findByTokenId(tokenId)
                 .orElseThrow(() -> new GeneralException(MessageFormat.format(ExceptionMessages.CLIENTE_NOT_FOUND, tokenId)));
-        cliente.setEstado(Boolean.FALSE);
-        clienteRepository.save(cliente);
+        clienteRepository.delete(cliente);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.pt.clientes.rest.builder;
 
 import com.pt.clientes.database.models.Cliente;
+import com.pt.clientes.database.models.Persona;
 import com.pt.clientes.rest.model.ClienteDto;
 import org.springframework.stereotype.Component;
 
@@ -9,10 +10,11 @@ import java.util.UUID;
 @Component
 public class ClienteBuilder {
 
-    public Cliente builder(ClienteDto model) {
+    public Cliente builder(ClienteDto model, Persona persona) {
         return Cliente.builder()
                 .contrasena(model.getContrasena())
                 .estado(model.getEstado())
+                .persona(persona)
                 .build();
     }
 

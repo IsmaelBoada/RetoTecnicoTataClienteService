@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class PersonaBuilder {
 
 
-    Persona builder(PersonaDto model) {
+    public Persona builder(PersonaDto model) {
         return Persona.builder()
                 .nombre(model.getNombre())
                 .genero(model.getGenero())
@@ -20,7 +20,7 @@ public class PersonaBuilder {
     }
 
 
-    Persona builderUpdate(Persona item, PersonaDto model) {
+    public Persona builderUpdate(Persona item, PersonaDto model) {
         return Persona.builder()
                 .id(item.getId())
                 .tokenId(item.getTokenId())
@@ -33,7 +33,7 @@ public class PersonaBuilder {
                 .build();
     }
 
-    PersonaDto builderResponse(Persona model) {
+    public PersonaDto builderResponse(Persona model) {
         return PersonaDto.builder()
                 .id(model.getId())
                 .tokenId(model.getTokenId())
